@@ -19,8 +19,9 @@
 //
 // Emoji correction: Chrome/Firefox canvas measures emoji wider than DOM at font
 //   sizes <24px on macOS (Apple Color Emoji). The inflation is constant per emoji
-//   grapheme at a given size, font-independent. Auto-detected by measuring a
-//   reference emoji and comparing to fontSize. Safari is unaffected (correction = 0).
+//   grapheme at a given size, font-independent. Auto-detected by comparing canvas
+//   vs actual DOM emoji width (one cached DOM read per font). Safari canvas and
+//   DOM agree (both wider than fontSize), so correction = 0 there.
 //
 // Limitations:
 //   - system-ui font: canvas resolves to different optical variants than DOM on macOS.
@@ -67,7 +68,8 @@ function parseFontSize(font: string): number {
 // Emoji correction: canvas measureText inflates emoji widths on Chrome/Firefox
 // at font sizes <24px on macOS. The inflation is per-emoji-grapheme, constant
 // across all emoji types (simple, ZWJ, flags, skin tones, keycaps) and all font
-// families. Auto-detected by measuring a reference emoji vs fontSize.
+// families. Auto-detected by comparing canvas vs DOM emoji width (one cached
+// DOM read per font). Safari canvas and DOM agree, so correction = 0.
 
 const emojiPresentationRe = /\p{Emoji_Presentation}/u
 // Shared segmenters: hoisted to module level to avoid per-prepare() construction.

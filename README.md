@@ -38,13 +38,14 @@ const { height, lineCount } = layout(block, containerWidth)
 
 Tested across 2 fonts × 8 sizes × 8 widths × 30 i18n texts (3840 tests):
 
-| Browser | Match rate | Remaining mismatches |
-|---|---|---|
-| Chrome | 99.9% | 2 Georgia rounding edge cases, 1 bidi boundary break |
-| Safari | 98.8% | CSS line-breaking rule differences (emoji breaks, CJK kinsoku, bidi) |
-| Headless (HarfBuzz) | 100% | Algorithm is exact |
+| Browser | Match rate | Tests | Remaining mismatches |
+|---|---|---|---|
+| Chrome | 99.96% | 7680 | Georgia rounding (2), Courier New Korean (1) |
+| Safari | 99.92% | 7680 | Georgia rounding (2), bidi paren (1), Verdana/Courier New bidi (3) |
+| Firefox | 99.95% | 7680 | Thai dictionary (3), Courier New Korean (1) |
+| Headless (HarfBuzz) | 100% | 1472 | Algorithm is exact |
 
-Chrome's remaining 3 mismatches are Georgia font measurement rounding at borderline widths and one bidi boundary break preference. Safari's mismatches are CSS line-breaking behavior differences (not measurement errors). See [RESEARCH.md](RESEARCH.md) for details.
+Tested across 4 fonts (Helvetica Neue, Georgia, Verdana, Courier New) × 8 sizes × 8 widths × 30 i18n texts. Remaining mismatches are font-specific measurement edge cases at borderline widths and browser-internal dictionary differences (Thai). Safari's mismatches are CSS line-breaking behavior differences (not measurement errors). See [RESEARCH.md](RESEARCH.md) for details.
 
 ## i18n
 
@@ -89,5 +90,5 @@ bun test         # headless accuracy tests (HarfBuzz)
 Pages:
 - `/` — visual demo (side-by-side with browser rendering)
 - `/accuracy` — sweep across fonts, sizes, widths, i18n texts
-- `/benchmark` — performance comparison (TODO)
+- `/benchmark` — performance comparison
 - `/interleaving` — realistic DOM interleaving demo (TODO)

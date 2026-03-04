@@ -17,7 +17,7 @@ DOM-free text measurement using canvas `measureText()` + `Intl.Segmenter`. Two-p
 - `pages/accuracy.html + .ts` — sweep across fonts, sizes, widths, i18n texts (working)
 - `pages/emoji-test.html` — canvas vs DOM emoji width comparison (working)
 - `pages/demo.html + .ts` — visual side-by-side comparison (TODO)
-- `pages/benchmark.html + .ts` — performance comparison (TODO)
+- `pages/benchmark.html + .ts` — performance comparison (working)
 - `pages/interleaving.html + .ts` — realistic DOM interleaving demo (TODO)
 
 ### Key decisions
@@ -37,16 +37,17 @@ DOM-free text measurement using canvas `measureText()` + `Intl.Segmenter`. Two-p
 
 ### Accuracy
 
-Chrome 99.9%, Safari 98.8%, HarfBuzz 100%. See [README.md](README.md) for details.
+Chrome 99.96%, Safari 99.92%, Firefox 99.95%, HarfBuzz 100%. 4 fonts × 7680 tests. See [README.md](README.md).
 
 ### TODO
 
 - Locale switch: segmenters are hoisted with the default locale. Expose a function to reinitialize them with a new locale without requiring a page refresh (e.g. `setLocale('ja')`). Should also clear the word cache since segmentation boundaries change per locale.
 - Rich layout result: `layout()` currently returns only `{ lineCount, height }`. Return per-line break info (start/end index, width) so callers can render lines themselves (custom text layout, canvas rendering). Data is already computed internally, just discarded.
 - Latin fast path: ASCII-only text (`/^[\x20-\x7E]+$/`) could skip CJK check, kinsoku, bidi, and emoji correction. Most comment feeds are >90% ASCII.
-- Benchmark page: measurement methodology needs review (visible vs hidden containers, prepare cold vs warm).
+- Benchmark page: measurement methodology needs review (prepare cold vs warm, visible container sizing).
 - Demo page: visual side-by-side comparison of library vs DOM rendering.
 - Interleaving page: realistic DOM interleaving demo.
+- Additional CSS config support: `break-all`, `keep-all`, `strict`, `loose`, `anywhere`, `pre-wrap`.
 
 ### Related
 
