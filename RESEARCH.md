@@ -87,9 +87,16 @@ macOS uses SF Pro Text (small sizes) and SF Pro Display (large sizes). Canvas an
 
 Tested whether `measureText("word1") + measureText(" ") + measureText("word2")` equals `measureText("word1 word2")` in canvas:
 
-**Diff: 0.0000152587890625px.** Essentially zero. Canvas `measureText()` is internally consistent — no kerning/shaping across word boundaries.
+**Diff: 0.0000152587890625px.** Essentially zero for two-word pairs. Canvas `measureText()` is internally consistent — no kerning/shaping across word boundaries.
 
 The same test with HarfBuzz: also 0.00 diff (when using explicit LTR direction).
+
+However, over full paragraphs (20+ segments), the per-pair consistency doesn't guarantee cumulative accuracy. The word-by-word sum of a full text can diverge from `measureText(fullText)` by 1-3px, enough to cause off-by-one line breaks at borderline widths. This affects ~2 tests on Chrome (Georgia) and ~11 on Safari (emoji-heavy text). Two approaches were tried and reverted:
+
+- **Trailing space exclusion**: exclude trailing space width from overflow check. Logically sound (CSS trailing spaces hang) but too disruptive — changed break decisions across the board (99.9% → 95%).
+- **Uniform scaling**: measure full text, compute ratio vs word-sum, scale all segment widths. Overcorrects some segments and undercorrects others since the divergence isn't uniformly distributed (99.9% → 99.7%).
+
+The divergence is small and varies by character adjacency — it's not a constant bias. A per-line full-string measurement during layout would fix it but requires storing text strings (not just widths) and canvas calls during the hot path, which conflicts with the two-phase design. There may be a better approach we haven't found yet.
 
 ## Discovery: punctuation accumulation error
 
