@@ -32,7 +32,7 @@ Canvas-first text measurement using canvas `measureText()` + `Intl.Segmenter`. T
 - Bidi levels are computed during `prepare()` and stored on `PreparedText`; `layout()` currently returns only height/line count and does not consume them yet.
 - CSS config: targets the default (`white-space: normal`, `word-break: normal`, `overflow-wrap: break-word`, `line-break: auto`). Other configurations (e.g. `break-all`, `keep-all`, `strict`, `loose`, `anywhere`) are untested and unsupported.
 - lineHeight default (`round(fontSize * 1.2)`) doesn't match CSS `line-height: normal` for all fonts/browsers. Georgia is off by 1px on Chrome/Safari, Firefox returns fractional values. Always pass explicit lineHeight matching your CSS.
-- system-ui font: Safari OK, Chrome sometimes mismatches (documented), Firefox is catastrophic (48px diff — canvas and DOM resolve to different fonts). Never use system-ui with this library.
+- system-ui font: Safari OK, Chrome sometimes mismatches (documented), Firefox is catastrophic (48px diff — canvas and DOM resolve to different fonts). Never use system-ui with this library. See [RESEARCH.md](RESEARCH.md#discovery-system-ui-font-resolution-mismatch).
 - Thai: Intl.Segmenter and CSS use different internal dictionaries for word boundaries. Same text, different break points. Causes ~2 mismatches on Firefox. Unfixable from our side.
 - HarfBuzz with explicit LTR for headless tests: guessSegmentProperties assigns wrong direction to isolated Arabic words.
 

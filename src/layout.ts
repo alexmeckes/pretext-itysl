@@ -27,6 +27,7 @@
 // Limitations:
 //   - system-ui font: canvas resolves to different optical variants than DOM on macOS.
 //     Use named fonts (Helvetica, Inter, etc.) for guaranteed accuracy.
+//     See RESEARCH.md "Discovery: system-ui font resolution mismatch".
 //
 // Based on Sebastian Markbage's text-layout research (github.com/chenglou/text-layout).
 
