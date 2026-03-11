@@ -1,4 +1,4 @@
-import { prepare, prepareWithSegments, layout, clearCache } from '../src/layout.ts'
+import { prepare, prepareWithSegments, layout, clearCache, profilePrepare } from '../src/layout.ts'
 import type { PreparedText } from '../src/layout.ts'
 import { TEXTS } from '../src/test-data.ts'
 import arRisalatAlGhufranPart1 from '../corpora/ar-risalat-al-ghufran-part-1.txt' with { type: 'text' }
@@ -34,9 +34,13 @@ type CorpusBenchmarkResult = {
   label: string
   font: string
   chars: number
+  analysisSegments: number
   segments: number
+  breakableSegments: number
   width: number
   lineCount: number
+  analysisMs: number
+  measureMs: number
   prepareMs: number
   layoutMs: number
 }
@@ -199,11 +203,26 @@ function buildCorpusBenchmarks(): CorpusBenchmarkResult[] {
   let corpusLayoutSink = 0
 
   for (const corpus of CORPORA) {
-    const prepareMs = bench(() => {
-      clearCache()
-      prepare(corpus.text, corpus.font)
-    }, 1, CORPUS_WARMUP, CORPUS_RUNS)
+    const analysisSamples: number[] = []
+    const measureSamples: number[] = []
+    const prepareSamples: number[] = []
 
+    for (let i = 0; i < CORPUS_WARMUP + CORPUS_RUNS; i++) {
+      clearCache()
+      const profile = profilePrepare(corpus.text, corpus.font)
+      if (i >= CORPUS_WARMUP) {
+        analysisSamples.push(profile.analysisMs)
+        measureSamples.push(profile.measureMs)
+        prepareSamples.push(profile.totalMs)
+      }
+    }
+
+    const analysisMs = median(analysisSamples)
+    const measureMs = median(measureSamples)
+    const prepareMs = median(prepareSamples)
+
+    clearCache()
+    const metadataProfile = profilePrepare(corpus.text, corpus.font)
     clearCache()
     const prepared = prepareWithSegments(corpus.text, corpus.font)
     const lineCount = layout(prepared, corpus.width, corpus.lineHeight).lineCount
@@ -219,9 +238,13 @@ function buildCorpusBenchmarks(): CorpusBenchmarkResult[] {
       label: corpus.label,
       font: corpus.font,
       chars: corpus.text.length,
+      analysisSegments: metadataProfile.analysisSegments,
       segments: prepared.widths.length,
+      breakableSegments: prepared.breakableWidths.filter(widths => widths !== null).length,
       width: corpus.width,
       lineCount,
+      analysisMs,
+      measureMs,
       prepareMs,
       layoutMs,
     })
@@ -448,19 +471,21 @@ async function run() {
   root.innerHTML += `
     <h2 style="color:#4fc3f7;font-family:monospace;font-size:16px;margin:24px 0 8px">Long-form corpus stress</h2>
     <table>
-      <tr><th>Corpus</th><th>Chars</th><th>Segs</th><th>Prepare cold (ms)</th><th>Layout hot (ms)</th><th>Lines @ width</th></tr>
+      <tr><th>Corpus</th><th>Chars</th><th>Segs</th><th>Analyze (ms)</th><th>Measure (ms)</th><th>Prepare cold (ms)</th><th>Layout hot (ms)</th><th>Lines @ width</th></tr>
       ${corpusResults.map(result => `
         <tr>
           <td>${result.label}</td>
           <td>${result.chars.toLocaleString()}</td>
           <td>${result.segments.toLocaleString()}</td>
+          <td>${result.analysisMs.toFixed(2)}</td>
+          <td>${result.measureMs.toFixed(2)}</td>
           <td>${result.prepareMs.toFixed(2)}</td>
           <td>${result.layoutMs < 0.01 ? '<0.01' : result.layoutMs.toFixed(2)}</td>
           <td>${result.lineCount} @ ${result.width}px</td>
         </tr>
       `).join('')}
     </table>
-    <p class="note">Long-form rows measure one cold prepare of a single full corpus text and one hot layout of that same prepared text. They are intended to catch script-specific prepare regressions that the short shared corpus can hide.</p>
+    <p class="note">Long-form rows split cold prepare into text analysis and measurement phases for one full corpus text, then report one hot layout pass over the prepared result. They are intended to catch script-specific prepare regressions that the short shared corpus can hide.</p>
   `
   root.dataset['topLayoutSink'] = String(topLayoutSink)
   root.dataset['scalingLayoutSink'] = String(scalingLayoutSink)

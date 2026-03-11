@@ -1068,6 +1068,15 @@ export type LayoutLinesResult = LayoutResult & {
   lines: LayoutLine[] // Per-line text/width pairs for custom rendering
 }
 
+export type PrepareProfile = {
+  analysisMs: number
+  measureMs: number
+  totalMs: number
+  analysisSegments: number
+  preparedSegments: number
+  breakableSegments: number
+}
+
 // --- Public API ---
 
 function createEmptyPrepared(includeSegments: boolean): InternalPreparedText | PreparedTextWithSegments {
@@ -1200,6 +1209,30 @@ function measureAnalysis(
 function prepareInternal(text: string, font: string, includeSegments: boolean): InternalPreparedText | PreparedTextWithSegments {
   const analysis = analyzeText(text)
   return measureAnalysis(analysis, font, includeSegments)
+}
+
+// Diagnostic-only helper used by the browser benchmark harness to separate the
+// text-analysis and measurement phases without duplicating the prepare logic.
+export function profilePrepare(text: string, font: string): PrepareProfile {
+  const t0 = performance.now()
+  const analysis = analyzeText(text)
+  const t1 = performance.now()
+  const prepared = measureAnalysis(analysis, font, false) as InternalPreparedText
+  const t2 = performance.now()
+
+  let breakableSegments = 0
+  for (const widths of prepared.breakableWidths) {
+    if (widths !== null) breakableSegments++
+  }
+
+  return {
+    analysisMs: t1 - t0,
+    measureMs: t2 - t1,
+    totalMs: t2 - t0,
+    analysisSegments: analysis.len,
+    preparedSegments: prepared.widths.length,
+    breakableSegments,
+  }
 }
 
 // Prepare text for layout. Segments the text, measures each segment via canvas,

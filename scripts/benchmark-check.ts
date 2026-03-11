@@ -18,9 +18,13 @@ type CorpusBenchmarkResult = {
   label: string
   font: string
   chars: number
+  analysisSegments: number
   segments: number
+  breakableSegments: number
   width: number
   lineCount: number
+  analysisMs: number
+  measureMs: number
   prepareMs: number
   layoutMs: number
 }
@@ -72,7 +76,7 @@ function printReport(report: BenchmarkReport): void {
     console.log('Long-form corpus stress:')
     for (const corpus of report.corpusResults!) {
       console.log(
-        `  ${corpus.label}: prepare ${corpus.prepareMs.toFixed(2)}ms | layout ${corpus.layoutMs < 0.01 ? '<0.01' : corpus.layoutMs.toFixed(2)}ms | ${corpus.segments.toLocaleString()} segs | ${corpus.lineCount} lines @ ${corpus.width}px`,
+        `  ${corpus.label}: analyze ${corpus.analysisMs.toFixed(2)}ms | measure ${corpus.measureMs.toFixed(2)}ms | prepare ${corpus.prepareMs.toFixed(2)}ms | layout ${corpus.layoutMs < 0.01 ? '<0.01' : corpus.layoutMs.toFixed(2)}ms | ${corpus.analysisSegments.toLocaleString()}→${corpus.segments.toLocaleString()} segs | ${corpus.lineCount} lines @ ${corpus.width}px`,
       )
     }
   }

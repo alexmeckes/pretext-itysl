@@ -8,7 +8,7 @@ Internal notes for contributors and agents. Use `README.md` as the public source
 - `bun run check` — typecheck + lint
 - `bun test` — lightweight invariant tests against the shipped implementation
 - `bun run accuracy-check` / `:safari` / `:firefox` — browser accuracy sweeps
-- `bun run benchmark-check` / `:safari` — benchmark snapshot with both the short shared corpus and long-form corpus stress rows
+- `bun run benchmark-check` / `:safari` — benchmark snapshot with both the short shared corpus and long-form corpus stress rows, including `prepare()` phase split (`analyze` vs `measure`) for the long-form corpora
 - `bun run corpus-check --id=... --font='20px ...' --lineHeight=32` — corpus spot check with optional font override
 - `bun run corpus-sweep --id=... --samples=9 --font='20px ...'` — sampled width sweep; use this before a dense sweep on large corpora
 - `bun run corpus-font-matrix --id=... --samples=5` — sampled cross-font check for one checked-in corpus
