@@ -2,19 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "bun install --frozen-lockfile",
   "buildCommand": "bun run site:build",
-  "outputDirectory": "site",
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/zipline"
-    },
-    {
-      "source": "/demos",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/demos/:path*",
-      "destination": "/:path*"
-    }
-  ]
+  "outputDirectory": "site"
 }

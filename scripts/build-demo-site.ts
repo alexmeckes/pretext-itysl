@@ -30,16 +30,17 @@ if (result.exitCode !== 0) {
 }
 
 const targets = [
-  { source: 'index.html', target: 'index.html' },
-  { source: 'accordion.html', target: 'accordion/index.html' },
-  { source: 'bubbles.html', target: 'bubbles/index.html' },
-  { source: 'dynamic-layout.html', target: 'dynamic-layout/index.html' },
-  { source: 'editorial-engine.html', target: 'editorial-engine/index.html' },
-  { source: 'justification-comparison.html', target: 'justification-comparison/index.html' },
-  { source: 'masonry/index.html', target: 'masonry/index.html' },
-  { source: 'rich-note.html', target: 'rich-note/index.html' },
-  { source: 'variable-typographic-ascii.html', target: 'variable-typographic-ascii/index.html' },
-  { source: 'zipline.html', target: 'zipline/index.html' },
+  { source: 'zipline.html', target: 'index.html' },
+  { source: 'index.html', target: 'demos/index.html' },
+  { source: 'accordion.html', target: 'demos/accordion/index.html' },
+  { source: 'bubbles.html', target: 'demos/bubbles/index.html' },
+  { source: 'dynamic-layout.html', target: 'demos/dynamic-layout/index.html' },
+  { source: 'editorial-engine.html', target: 'demos/editorial-engine/index.html' },
+  { source: 'justification-comparison.html', target: 'demos/justification-comparison/index.html' },
+  { source: 'masonry/index.html', target: 'demos/masonry/index.html' },
+  { source: 'rich-note.html', target: 'demos/rich-note/index.html' },
+  { source: 'variable-typographic-ascii.html', target: 'demos/variable-typographic-ascii/index.html' },
+  { source: 'zipline.html', target: 'demos/zipline/index.html' },
 ]
 
 for (let index = 0; index < targets.length; index++) {
@@ -66,11 +67,10 @@ async function moveBuiltHtml(sourceRelativePath: string, targetRelativePath: str
   const targetPath = path.join(outdir, targetRelativePath)
   let html = await readFile(sourcePath, 'utf8')
   html = rebaseRelativeAssetUrls(html, sourcePath, targetPath)
-  html = rewriteDemoLinksForStaticRoot(html, targetRelativePath)
+  html = rewriteDemoLinksForStaticSite(html, targetRelativePath)
 
   await mkdir(path.dirname(targetPath), { recursive: true })
   await writeFile(targetPath, html)
-  if (sourcePath !== targetPath) await rm(sourcePath)
 }
 
 function rebaseRelativeAssetUrls(html: string, sourcePath: string, targetPath: string): string {
@@ -85,7 +85,9 @@ function rebaseRelativeAssetUrls(html: string, sourcePath: string, targetPath: s
   })
 }
 
-function rewriteDemoLinksForStaticRoot(html: string, targetRelativePath: string): string {
-  if (targetRelativePath !== 'index.html') return html
-  return html.replace(/\bhref="\/demos\/([^"/]+)"/g, (_match, slug: string) => `href="./${slug}"`)
+function rewriteDemoLinksForStaticSite(html: string, targetRelativePath: string): string {
+  if (targetRelativePath === 'demos/index.html') {
+    return html.replace(/\bhref="\/demos\/([^"/]+)"/g, (_match, slug: string) => `href="./${slug}"`)
+  }
+  return html
 }
