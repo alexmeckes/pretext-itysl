@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A fake prestige-magazine spread about the reality-show contestant who was obviously there for the resort zipline, not the romance.">
+  <title>Mockup 148 - Zipline</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+
+    :root {
+      color-scheme: light;
+      --paper: #f5efe4;
+      --paper-shadow: #e6dccd;
+      --ink: #161311;
+      --muted: #6e655b;
+      --accent: #a73522;
+      --accent-soft: #d86a54;
+      --rule: rgba(22, 19, 17, 0.14);
+    }
+
+    html, body {
+      min-height: 100%;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.9), transparent 34%),
+        linear-gradient(180deg, #fbf7f0 0%, var(--paper) 52%, #efe4d4 100%);
+      color: var(--ink);
+    }
+
+    body {
+      font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    }
+
+    #stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    #stage::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid var(--rule);
+      box-shadow: 0 28px 90px rgba(87, 59, 33, 0.14);
+      pointer-events: none;
+    }
+
+    .headline-line {
+      position: absolute;
+      white-space: pre;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      z-index: 3;
+    }
+
+    .dek-line {
+      position: absolute;
+      white-space: pre;
+      color: var(--muted);
+      z-index: 3;
+    }
+
+    .body-line {
+      position: absolute;
+      white-space: pre;
+      color: rgba(22, 19, 17, 0.96);
+      z-index: 2;
+    }
+
+    .zipline-cable {
+      position: absolute;
+      height: 3px;
+      transform-origin: 0 50%;
+      background:
+        linear-gradient(90deg, rgba(167, 53, 34, 0.7), rgba(95, 28, 20, 0.95) 22%, rgba(167, 53, 34, 0.75));
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.25),
+        0 2px 10px rgba(0, 0, 0, 0.18);
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .tim {
+      position: absolute;
+      transform-origin: center center;
+      z-index: 5;
+      pointer-events: none;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100% 100%;
+      -webkit-mask-position: center;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-size: 100% 100%;
+      mask-position: center;
+      mask-repeat: no-repeat;
+      mask-size: 100% 100%;
+      filter:
+        drop-shadow(0 12px 18px rgba(104, 56, 25, 0.22))
+        drop-shadow(0 22px 32px rgba(0, 0, 0, 0.18));
+      will-change: transform, left, top;
+    }
+
+    .byline {
+      position: absolute;
+      right: 34px;
+      bottom: 28px;
+      font: 500 13px/1.2 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      letter-spacing: 0.04em;
+      color: rgba(22, 19, 17, 0.62);
+      z-index: 6;
+      pointer-events: none;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <div class="byline">by @AlexMeckes</div>
+  </div>
+  <script type="module" src="./zipline.ts"></script>
+</body>
+</html>
