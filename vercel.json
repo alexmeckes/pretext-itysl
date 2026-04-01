@@ -5,8 +5,12 @@
   "outputDirectory": "site",
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/zipline"
+    },
+    {
       "source": "/demos",
-      "destination": "/"
+      "destination": "/index.html"
     },
     {
       "source": "/demos/:path*",
